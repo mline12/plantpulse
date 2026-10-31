@@ -1,0 +1,15 @@
+[project]
+name = "plantpulse"
+version = "0.1.0"
+description = "Industrial telemetry and monitoring API"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",
+]
