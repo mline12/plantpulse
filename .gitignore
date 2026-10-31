@@ -220,12 +220,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-#generated python files
-__pycache__/
-#py[cod]
-
-# Outils et tests
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
