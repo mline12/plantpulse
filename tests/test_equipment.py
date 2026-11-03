@@ -1,20 +1,16 @@
-
-from fastapi.testclient import TestClient
 from uuid import uuid4
 
-from app.main import app
-
-client = TestClient(app)
+from fastapi.testclient import TestClient
 
 
-def test_health_returns_ok():
+def test_health_returns_ok(client: TestClient):
     response = client.get("/health")
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
-def test_create_equipment():
+def test_create_equipment(client: TestClient):
     response = client.post(
         "/equipment",
         json={
@@ -32,7 +28,7 @@ def test_create_equipment():
     assert "id" in data
 
 
-def test_create_equipment_rejects_empty_name():
+def test_create_equipment_rejects_empty_name(client: TestClient):
     response = client.post(
         "/equipment",
         json={
@@ -44,7 +40,7 @@ def test_create_equipment_rejects_empty_name():
     assert response.status_code == 422
 
 
-def test_get_existing_equipment():
+def test_get_existing_equipment(client: TestClient):
     created = client.post(
         "/equipment",
         json={
@@ -61,11 +57,10 @@ def test_get_existing_equipment():
     assert response.json()["name"] == "Pompe P-102"
 
 
-def test_get_unknown_equipment_returns_404():
+def test_get_unknown_equipment_returns_404(client: TestClient):
     unknown_id = uuid4()
 
     response = client.get(f"/equipment/{unknown_id}")
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Equipment not found"
-

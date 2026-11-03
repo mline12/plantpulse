@@ -1,24 +1,27 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from app.schemas.equipment import EquipmentCreate, EquipmentRead
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.models.equipment import Equipment
+from app.schemas.equipment import EquipmentCreate
 
 
-_equipments: dict[UUID, EquipmentRead] = {}
-
-
-def create_equipment(data: EquipmentCreate) -> EquipmentRead:
-    equipment = EquipmentRead(
-        id=uuid4(),
+def create_equipment(db: Session, data: EquipmentCreate) -> Equipment:
+    equipment = Equipment(
         name=data.name,
         location=data.location,
     )
-    _equipments[equipment.id] = equipment
+    db.add(equipment)
+    db.commit()
+    db.refresh(equipment)
     return equipment
 
 
-def list_equipments() -> list[EquipmentRead]:
-    return list(_equipments.values())
+def list_equipments(db: Session) -> list[Equipment]:
+    statement = select(Equipment).order_by(Equipment.created_at.desc())
+    return list(db.scalars(statement).all())
 
 
-def get_equipment(equipment_id: UUID) -> EquipmentRead | None:
-    return _equipments.get(equipment_id)
+def get_equipment(db: Session, equipment_id: UUID) -> Equipment | None:
+    return db.get(Equipment, equipment_id)
