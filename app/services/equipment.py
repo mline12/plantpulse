@@ -13,8 +13,12 @@ def create_equipment(db: Session, data: EquipmentCreate) -> Equipment:
         location=data.location,
     )
     db.add(equipment)
-    db.commit()
-    db.refresh(equipment)
+    try:
+        db.commit()
+        db.refresh(equipment)
+    except Exception:
+        db.rollback()
+        raise
     return equipment
 
 
